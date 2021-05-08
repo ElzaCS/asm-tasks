@@ -1,0 +1,687 @@
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\doorlooc.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE doorlooc.asm SET(SMALL) DEBUG PRINT(.\Listings\doorlooc.lst) OBJECT(.\O
+                      bjects\doorlooc.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $nomod51 
+                       2     
+                       3     NAME    DOORLOOC
+                       4     
+                       5     ;assign values in data and bit address space
+  0080                 6     P0      DATA    080H
+  0090                 7     P1      DATA    090H
+  00A0                 8     P2      DATA    0A0H
+  00B0                 9     P3      DATA    0B0H
+  00B4                10     T0      BIT     0B0H.4
+  00D6                11     AC      BIT     0D0H.6
+  00B5                12     T1      BIT     0B0H.5
+  00AF                13     EA      BIT     0A8H.7
+  00A8                14     IE      DATA    0A8H
+  00B0                15     keycolumn1      BIT     0B0H.0
+  00B1                16     keycolumn2      BIT     0B0H.1
+  00B2                17     keycolumn3      BIT     0B0H.2
+  00B7                18     RD      BIT     0B0H.7
+  00AC                19     ES      BIT     0A8H.4
+  00B8                20     IP      DATA    0B8H
+  0098                21     RI      BIT     098H.0
+  00B2                22     INT0    BIT     0B0H.2
+  00D7                23     CY      BIT     0D0H.7
+  0099                24     TI      BIT     098H.1
+  00B3                25     INT1    BIT     0B0H.3
+  00BC                26     PS      BIT     0B8H.4
+  0081                27     SP      DATA    081H
+  00D2                28     OV      BIT     0D0H.2
+  00B6                29     WR      BIT     0B0H.6
+  00B3                30     motorpin1       BIT     0B0H.3
+  00B4                31     motorpin2       BIT     0B0H.4
+  0099                32     SBUF    DATA    099H
+  0087                33     PCON    DATA    087H
+  0098                34     SCON    DATA    098H
+  0089                35     TMOD    DATA    089H
+  0088                36     TCON    DATA    088H
+  0089                37     IE0     BIT     088H.1
+  008B                38     IE1     BIT     088H.3
+  00F0                39     B       DATA    0F0H
+  00E0                40     ACC     DATA    0E0H
+  00A9                41     ET0     BIT     0A8H.1
+  00AB                42     ET1     BIT     0A8H.3
+  008D                43     TF0     BIT     088H.5
+  008F                44     TF1     BIT     088H.7
+  009A                45     RB8     BIT     098H.2
+  008C                46     TH0     DATA    08CH
+  00A8                47     EX0     BIT     0A8H.0
+  0088                48     IT0     BIT     088H.0
+  008D                49     TH1     DATA    08DH
+  009B                50     TB8     BIT     098H.3
+  00AA                51     EX1     BIT     0A8H.2
+  008A                52     IT1     BIT     088H.2
+  00D0                53     P       BIT     0D0H.0
+  009F                54     SM0     BIT     098H.7
+  008A                55     TL0     DATA    08AH
+  009E                56     SM1     BIT     098H.6
+  008B                57     TL1     DATA    08BH
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     2
+
+  009D                58     SM2     BIT     098H.5
+  00B7                59     en      BIT     0B0H.7
+  00B9                60     PT0     BIT     0B8H.1
+  00BB                61     PT1     BIT     0B8H.3
+  00D3                62     RS0     BIT     0D0H.3
+  00A0                63     keyrow1 BIT     0A0H.0
+  008C                64     TR0     BIT     088H.4
+  00D4                65     RS1     BIT     0D0H.4
+  00A1                66     keyrow2 BIT     0A0H.1
+  008E                67     TR1     BIT     088H.6
+  00A2                68     keyrow3 BIT     0A0H.2
+  00B8                69     PX0     BIT     0B8H.0
+  00A3                70     keyrow4 BIT     0A0H.3
+  00BA                71     PX1     BIT     0B8H.2
+  0083                72     DPH     DATA    083H
+  0082                73     DPL     DATA    082H
+  00B5                74     rs      BIT     0B0H.5
+  009C                75     REN     BIT     098H.4
+  00B6                76     rw      BIT     0B0H.6
+  00B0                77     RXD     BIT     0B0H.0
+  00B1                78     TXD     BIT     0B0H.1
+  00D5                79     F0      BIT     0D0H.5
+  00D0                80     PSW     DATA    0D0H
+                      81     
+                      82     ;code segments
+                      83     PR_main_DOORLOOC    SEGMENT CODE 
+                      84     DT_main_DOORLOOC    SEGMENT DATA OVERLAYABLE 
+                      85     PR_delay_DOORLOOC  SEGMENT CODE 
+                      86     PR_lcdcmd_DOORLOOC SEGMENT CODE 
+                      87     PR_lcddat_DOORLOOC SEGMENT CODE 
+                      88     PR_lcddisplay_DOORLOOC                 SEGMENT CODE 
+                      89     DT_lcddisplay_DOORLOOC                 SEGMENT DATA OVERLAYABLE 
+                      90     PR_keypad_DOORLOOC  SEGMENT CODE 
+                      91     PR_check_DOORLOOC   SEGMENT CODE 
+                      92     CO_DOORLOOC         SEGMENT CODE 
+                      93     ?C_INITSEG           SEGMENT CODE 
+                      94     DT_DOORLOOC         SEGMENT DATA 
+                      95             ; ext declaractions for functions
+                      96             EXTRN   CODE (?C_STARTUP)
+                      97             EXTRN   CODE (?C?CLDOPTR)
+                      98             PUBLIC  pin
+                      99             PUBLIC  Epin
+                     100             PUBLIC  check
+                     101             PUBLIC  keypad
+                     102             PUBLIC  _lcddisplay
+                     103             PUBLIC  _lcddat
+                     104             PUBLIC  _lcdcmd
+                     105             PUBLIC  _delay
+                     106             PUBLIC  main
+                     107     
+----                 108             RSEG  DT_main_DOORLOOC
+0000                 109     main_label:
+0000                 110               temp_main:   DS   2
+                     111     
+----                 112             RSEG  DT_lcddisplay_DOORLOOC
+0000                 113     lcddisplay_label:
+0000                 114               temp:   DS   3
+0003                 115             ORG  3
+0003                 116               temp2:   DS   2
+                     117     
+----                 118             RSEG  DT_DOORLOOC
+0000                 119                Epin:   DS   5
+0005                 120                 pin:   DS   6
+                     121     
+----                 122             RSEG  CO_DOORLOOC
+0000                 123     S_ENTER:
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     3
+
+0000 454E5445        124             DB  'E' ,'N' ,'T' ,'E' ,'R' ,' ' ,'P' ,'I' ,'N' ,' ' 
+0004 52205049                
+0008 4E20                    
+000A 4E554D42        125             DB  'N' ,'U' ,'M' ,'B' ,'E' ,'R' ,000H
+000E 455200                  
+                     126     
+0011                 127     S_CORRECT:
+0011 50494E20        128             DB  'P' ,'I' ,'N' ,' ' ,'C' ,'O' ,'R' ,'R' ,'E' ,'C' 
+0015 434F5252                
+0019 4543                    
+001B 5400            129             DB  'T' ,000H
+                     130     
+001D                 131     S_OPEN:
+001D 444F4F52        132             DB  'D' ,'O' ,'O' ,'R' ,' ' ,'O' ,'P' ,'E' ,'N' ,'E' 
+0021 204F5045                
+0025 4E45                    
+0027 4400            133             DB  'D' ,000H
+                     134     
+0029                 135     S_WRONG:
+0029 57524F4E        136             DB  'W' ,'R' ,'O' ,'N' ,'G' ,' ' ,'P' ,'I' ,'N' ,000H
+002D 47205049                
+0031 4E00                    
+                     137     
+                     138     
+----                 139             RSEG  ?C_INITSEG
+0000 06              140             DB      006H
+0001 00       F      141             DB      pin
+0002 31323334        142             DB  '1' ,'2' ,'3' ,'4' ,'5' ,000H
+0006 3500                    
+                     143     
+                     144     
+                     145     ; void main()
+----                 146             RSEG  PR_main_DOORLOOC
+0000                 147     main:
+                     148             USING   0
+                     149             ; lcdcmd(0x0F); LINE # 38
+0000 7F0F            150             MOV     R7,#0FH
+0002 120000   F      151             LCALL   _lcdcmd
+0005 7F38            152             MOV     R7,#038H
+0007 120000   F      153             LCALL   _lcdcmd
+000A 7F01            154             MOV     R7,#01H
+000C 120000   F      155             LCALL   _lcdcmd
+                     156             
+000F                 157     WHILE_1:        ; while (1) LINE # 44
+000F E4              158             CLR     A
+0010 F500     F      159             MOV     temp_main,A
+0012 F500     F      160             MOV     temp_main+01H,A
+0014 7F80            161             MOV     R7,#080H
+0016 120000   F      162             LCALL   _lcdcmd
+                     163             ; lcddisplay("ENTER PIN NUMBER"); LINE # 46
+0019 7BFF            164             MOV     R3,#0FFH
+001B 7A00     F      165             MOV     R2,#HIGH (S_ENTER)
+001D 7900     F      166             MOV     R1,#LOW (S_ENTER)
+001F 120000   F      167             LCALL   _lcddisplay
+                     168             ; delay(1000); LINE # 47
+0022 120000   F      169             LCALL   L_DELAY
+0025 7FC0            170             MOV     R7,#0C0H
+0027 120000   F      171             LCALL   _lcdcmd
+                     172             
+002A                 173     PIN_NE_ZERO:    ; while (pin[i] != '\0') LINE # 49
+002A 7400     F      174             MOV     A,#LOW (pin)
+002C 2500     F      175             ADD     A,temp_main+01H
+002E F8              176             MOV     R0,A
+002F E6              177             MOV     A,@R0
+0030 6017            178             JZ      L_CHECK
+                     179     
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     4
+
+                     180             ; Epin[i] = keypad();   ; LINE # 51
+0032 120000   F      181             LCALL   keypad
+0035 7400     F      182             MOV     A,#LOW (Epin)
+0037 2500     F      183             ADD     A,temp_main+01H
+0039 F8              184             MOV     R0,A
+003A A607            185             MOV     @R0,AR7
+                     186             ; delay(1000);  ; LINE # 52
+003C 120000   F      187             LCALL   L_DELAY
+                     188             ; i++;  ; LINE # 53
+003F 0500     F      189             INC     temp_main+01H
+0041 E500     F      190             MOV     A,temp_main+01H
+0043 70E5            191             JNZ     PIN_NE_ZERO
+0045 0500     F      192             INC     temp_main
+0047                 193     WHILE_1_TERMINATE:                      ; LINE # 54
+0047 80E1            194             SJMP    PIN_NE_ZERO
+0049                 195     L_CHECK:                                ; check();      ; LINE # 55
+0049 120000   F      196             LCALL   check
+004C 80C1            197             SJMP    WHILE_1
+                     198     ; END OF main
+                     199     
+                     200     ; void delay(unsigned int j)
+----                 201             RSEG  PR_delay_DOORLOOC
+0000                 202     L_X_EQ_1:
+                     203             USING   0
+0000                 204     L2_X_EQ_1:
+0000 7F2A            205             MOV     R7,#02AH
+0002 120000   F      206             LCALL   _lcddat
+0005                 207     L_DELAY:
+0005 7FE8            208             MOV     R7,#0E8H
+0007 7E03            209             MOV     R6,#03H
+0009                 210     _delay:
+                     211             USING   0                       ; LINE # 60
+0009 E4              212             CLR     A
+000A FD              213             MOV     R5,A
+000B FC              214             MOV     R4,A
+000C                 215     L2_DELAY:
+000C C3              216             CLR     C
+000D ED              217             MOV     A,R5
+000E 9F              218             SUBB    A,R7
+000F EC              219             MOV     A,R4
+0010 9E              220             SUBB    A,R6
+0011 5015            221             JNC     L7_DELAY
+                     222     
+0013 E4              223             CLR     A       ; LINE # 64
+0014 FB              224             MOV     R3,A
+0015 FA              225             MOV     R2,A
+0016                 226     L3_DELAY:
+0016 0B              227             INC     R3
+0017 BB0001          228             CJNE    R3,#00H,L4_DELAY
+001A 0A              229             INC     R2
+001B                 230     L4_DELAY:
+001B EB              231             MOV     A,R3
+001C 640A            232             XRL     A,#0AH
+001E 4A              233             ORL     A,R2
+001F 70F5            234             JNZ     L3_DELAY
+                     235     
+0021                 236     L5_DELAY:               ; LINE # 67
+0021 0D              237             INC     R5
+0022 BD0001          238             CJNE    R5,#00H,L6_DELAY
+0025 0C              239             INC     R4
+0026                 240     L6_DELAY:
+0026 80E4            241             SJMP    L2_DELAY
+                     242     
+0028                 243     L7_DELAY:       ; LINE # 68
+0028 22              244             RET     
+                     245     ; END OF _delay
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     5
+
+                     246     
+                     247     
+                     248     ; void lcdcmd(unsigned char A)
+----                 249             RSEG  PR_lcdcmd_DOORLOOC
+0000                 250     _lcdcmd:
+                     251             USING   0       ; LINE # 71
+0000 8F90            252             MOV     P1,R7   
+0002 C2B5            253             CLR     rs              ;     rs = 0;
+0004 C2B6            254             CLR     rw              ;     rw = 0;
+0006 D2B7            255             SETB    en              ;     en = 1;
+0008 120000   F      256             LCALL   L_DELAY ;     en = 1;
+000B C2B7            257             CLR     en              ;     en = 0; 
+000D 22              258             RET                     ; LINE # 79
+                     259     ; END OF _lcdcmd
+                     260     
+                     261     
+                     262     ; void lcddat(unsigned char i)
+----                 263             RSEG  PR_lcddat_DOORLOOC
+0000                 264     _lcddat:
+                     265             USING   0                       ; LINE # 83
+0000 8F90            266             MOV     P1,R7           ;     P1 = i;
+0002 D2B5            267             SETB    rs                      ;     rs = 1;
+0004 C2B6            268             CLR     rw                      ;     rw = 0;
+0006 D2B7            269             SETB    en                      ;     en = 1;   
+0008 120000   F      270             LCALL   L_DELAY         ;     en = 1;
+000B C2B7            271             CLR     en                      ;     en = 1;
+000D 22              272             RET     
+                     273     ; END OF _lcddat
+                     274     
+                     275     
+                     276     ; void lcddisplay(unsigned char *q)
+----                 277             RSEG  PR_lcddisplay_DOORLOOC
+0000                 278     _lcddisplay:
+                     279             USING   0       ; LINE # 95
+0000 8B00     F      280             MOV     temp,R3
+0002 8A00     F      281             MOV     temp+01H,R2
+0004 8900     F      282             MOV     temp+02H,R1             ; LINE # 96
+                     283                     
+                     284             ;     for (k = 0; q[k] != '\0'; k++) LINE # 98
+0006 E4              285             CLR     A
+0007 F500     F      286             MOV     temp2,A
+0009 F500     F      287             MOV     temp2+01H,A
+000B                 288     L1_LCD:
+000B AB00     F      289             MOV     R3,temp
+000D AA00     F      290             MOV     R2,temp+01H
+000F A900     F      291             MOV     R1,temp+02H
+0011 850082   F      292             MOV     DPL,temp2+01H
+0014 850083   F      293             MOV     DPH,temp2
+0017 120000   F      294             LCALL   ?C?CLDOPTR
+001A FF              295             MOV     R7,A
+001B 6000     F      296             JZ      L3_DELAY
+                     297     
+                     298             ; lcddat(q[k]); LINE # 100
+001D 120000   F      299             LCALL   _lcddat
+                     300     
+0020 0500     F      301             INC     temp2+01H
+0022 E500     F      302             MOV     A,temp2+01H
+0024 70E5            303             JNZ     L1_LCD
+0026 0500     F      304             INC     temp2
+0028                 305     L2_LCD:
+0028 80E1            306             SJMP    L1_LCD
+002A                 307     L3_LCD:         ; delay(10000); LINE # 102
+002A 7F10            308             MOV     R7,#010H
+002C 7E27            309             MOV     R6,#027H
+002E 020000   F      310             LJMP    _delay
+                     311     ; END OF _lcddisplay
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     6
+
+                     312     
+                     313     
+                     314     ; char keypad()
+----                 315             RSEG  PR_keypad_DOORLOOC
+0000                 316     keypad:
+                     317             USING   0       
+0000 E4              318             CLR     A               ; int x = 0; LINE # 109
+0001 FF              319             MOV     R7,A
+0002 FE              320             MOV     R6,A
+0003                 321     WHILE_X_0:              ;     while (x == 0); LINE # 110
+0003 EF              322             MOV     A,R7
+0004 4E              323             ORL     A,R6
+0005 6003            324             JZ      $ + 5H
+0007 020000   F      325             LJMP    L12_KEYS
+                     326     
+                     327             ; assign values for first row
+000A C2A0            328             CLR     keyrow1         ; keyrow1 = 0; LINE # 113
+000C D2A1            329             SETB    keyrow2         ; keyrow2 = 1; 
+000E D2A2            330             SETB    keyrow3         ; keyrow3 = 1; 
+0010 D2A3            331             SETB    keyrow4         ; keyrow4 = 1; 
+0012 20B006          332             JB      keycolumn1,L1_KEYS              ; if (keycolumn1 == 0)
+0015 120000   F      333             LCALL   L_X_EQ_1
+0018 7F31            334             MOV     R7,#031H
+001A 22              335             RET     
+                     336     
+001B                 337     L1_KEYS:
+001B 20B106          338             JB      keycolumn2,L2_KEYS              ; if (keycolumn2 == 0)  LINE # 124
+001E 120000   F      339             LCALL   L_X_EQ_1
+0021 7F32            340             MOV     R7,#032H
+0023 22              341             RET     
+0024                 342     L2_KEYS:
+0024 20B206          343             JB      keycolumn3,L3_KEYS              ; if (keycolumn3 == 0)  LINE # 131
+0027 120000   F      344             LCALL   L2_X_EQ_1
+002A 7F33            345             MOV     R7,#033H
+002C 22              346             RET     
+                     347             
+002D                 348     L3_KEYS:
+                     349             ;         // assign values for second row
+002D D2A0            350             SETB    keyrow1         ; keyrow1 = 1; LINE # 139
+002F C2A1            351             CLR     keyrow2         ; keyrow2 = 0; 
+0031 D2A2            352             SETB    keyrow3         ; keyrow3 = 1; 
+0033 D2A3            353             SETB    keyrow4         ; keyrow4 = 1; 
+0035 20B006          354             JB      keycolumn1,L4_KEYS              ; if (keycolumn1 == 0)  
+0038 120000   F      355             LCALL   L2_X_EQ_1
+003B 7F34            356             MOV     R7,#034H
+003D 22              357             RET     
+                     358             
+003E                 359     L4_KEYS:
+003E 20B106          360             JB      keycolumn2,L5_KEYS              ; if (keycolumn2 == 0)  LINE # 151
+0041 120000   F      361             LCALL   L2_X_EQ_1
+0044 7F35            362             MOV     R7,#035H
+0046 22              363             RET     
+                     364             
+0047                 365     L5_KEYS:
+0047 20B206          366             JB      keycolumn3,L6_KEYS              ; if (keycolumn3 == 0)  LINE # 158
+004A 120000   F      367             LCALL   L2_X_EQ_1
+004D 7F36            368             MOV     R7,#036H
+004F 22              369             RET     
+                     370     
+0050                 371     L6_KEYS:
+                     372             ;assign values for third row
+0050 D2A0            373             SETB    keyrow1 ; keyrow1 = 1;  LINE # 167
+0052 D2A1            374             SETB    keyrow2 ; keyrow2 = 1;  
+0054 C2A2            375             CLR     keyrow3 ; keyrow3 = 0;  
+0056 D2A3            376             SETB    keyrow4 ; keyrow4 = 1;  
+0058 20B006          377             JB      keycolumn1,L7_KEYS      ;  if (keycolumn1 == 0) 
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     7
+
+005B 120000   F      378             LCALL   L2_X_EQ_1
+005E 7F37            379             MOV     R7,#037H
+0060 22              380             RET     
+                     381     
+0061                 382     L7_KEYS:
+0061 20B106          383             JB      keycolumn2,L8_KEYS      ; if (keycolumn2 == 0)  LINE # 178
+0064 120000   F      384             LCALL   L2_X_EQ_1
+0067 7F38            385             MOV     R7,#038H
+0069 22              386             RET     
+                     387     
+006A                 388     L8_KEYS:
+006A 20B206          389             JB      keycolumn3,L9_KEYS      ; if (keycolumn3 == 0)  LINE # 185
+006D 120000   F      390             LCALL   L2_X_EQ_1
+0070 7F39            391             MOV     R7,#039H
+0072 22              392             RET     
+                     393     
+0073                 394     L9_KEYS:
+                     395             ;assign values for forth row
+0073 D2A0            396             SETB    keyrow1 ; keyrow1 = 1;  LINE # 194
+0075 D2A1            397             SETB    keyrow2 ; keyrow2 = 1;  
+0077 D2A2            398             SETB    keyrow3 ; keyrow3 = 1;  
+0079 C2A3            399             CLR     keyrow4 ; keyrow4 = 0;  
+007B 20B006          400             JB      keycolumn1,L10_KEYS     ;   if (keycolumn1 == 0) 
+007E 120000   F      401             LCALL   L2_X_EQ_1
+0081 7F2A            402             MOV     R7,#02AH
+0083 22              403             RET     
+                     404     
+0084                 405     L10_KEYS:
+0084 20B106          406             JB      keycolumn2,L11_KEYS     ; if (keycolumn2 == 0)  LINE # 206
+0087 120000   F      407             LCALL   L2_X_EQ_1
+008A 7F30            408             MOV     R7,#030H
+008C 22              409             RET     
+                     410     
+008D                 411     L11_KEYS:
+008D 30B203          412             JNB     keycolumn3,$ + 6H       ; if (keycolumn3 == 0)  LINE # 213
+0090 020000   F      413             LJMP    WHILE_X_0
+0093 120000   F      414             LCALL   L2_X_EQ_1
+0096 7F23            415             MOV     R7,#023H
+0098 22              416             RET     
+                     417     
+0099                 418     L12_KEYS:
+0099 7F23            419             MOV     R7,#023H        ; return '#';   LINE # 221
+                     420     
+009B                 421     L13_KEYS:
+009B 22              422             RET     
+                     423     ; END OF keypad
+                     424     
+                     425     ; void check()
+----                 426             RSEG  PR_check_DOORLOOC
+0000                 427     check:
+                     428             USING   0
+                     429             ;  compare the input value with the assign password value
+                     430             ;  if (pin[0] == Epin[0] && pin[1] == Epin[1] && pin[2] == Epin[2] && pin[3] == Epi
+                             n[3] && pin[4] == Epin[4])
+                     431             ; LINE # 229
+0000 E500     F      432             MOV     A,pin
+0002 6500     F      433             XRL     A,Epin
+0004 7050            434             JNZ     CHECK_ELSE
+0006 E500     F      435             MOV     A,pin+01H
+0008 6500     F      436             XRL     A,Epin+01H
+000A 704A            437             JNZ     CHECK_ELSE
+000C E500     F      438             MOV     A,pin+02H
+000E 6500     F      439             XRL     A,Epin+02H
+0010 7044            440             JNZ     CHECK_ELSE
+0012 E500     F      441             MOV     A,pin+03H
+0014 6500     F      442             XRL     A,Epin+03H
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     8
+
+0016 703E            443             JNZ     CHECK_ELSE
+0018 E500     F      444             MOV     A,pin+04H
+001A 6500     F      445             XRL     A,Epin+04H
+001C 7038            446             JNZ     CHECK_ELSE
+                     447     
+001E 120000   F      448             LCALL   L_DELAY ;         delay(1000);                  ; LINE # 231
+0021 7F01            449             MOV     R7,#01H 
+0023 120000   F      450             LCALL   _lcdcmd
+0026 7F81            451             MOV     R7,#081H
+0028 120000   F      452             LCALL   _lcdcmd
+                     453             ; show pin is correct, lcddisplay("PIN CORRECT"); LINE # 235
+002B 7BFF            454             MOV     R3,#0FFH
+002D 7A00     F      455             MOV     R2,#HIGH (S_CORRECT)
+002F 7900     F      456             MOV     R1,#LOW (S_CORRECT)
+0031 120000   F      457             LCALL   _lcddisplay
+0034 120000   F      458             LCALL   L_DELAY 
+0037 D2B3            459             SETB    motorpin1 ;  door motor will run;         motorpin1 = 1;                   
+                                  ; LINE # 238
+0039 C2B4            460             CLR     motorpin2 ;  motorpin2 = 0;                     ; LINE # 239
+003B 7FC1            461             MOV     R7,#0C1H 
+003D 120000   F      462             LCALL   _lcdcmd
+                     463             ; show the door is unlocked, lcddisplay("DOOR OPENED"); LINE # 242
+0040 7BFF            464             MOV     R3,#0FFH
+0042 7A00     F      465             MOV     R2,#HIGH (S_OPEN)
+0044 7900     F      466             MOV     R1,#LOW (S_OPEN)
+0046 120000   F      467             LCALL   _lcddisplay
+0049 7F10            468             MOV     R7,#010H
+004B 7E27            469             MOV     R6,#027H
+004D 120000   F      470             LCALL   _delay
+0050 D2B3            471             SETB    motorpin1       ;         motorpin1 = 1;                        ; LINE # 244
+0052 C2B4            472             CLR     motorpin2       ;         motorpin2 = 0;                        ; LINE # 245
+0054 8016            473             SJMP    L1_CHECK
+0056                 474     CHECK_ELSE:             ;     else
+0056 7F01            475             MOV     R7,#01H 
+0058 120000   F      476             LCALL   _lcdcmd ; lcdcmd(0x01); LINE # 250
+005B 7F80            477             MOV     R7,#080H
+005D 120000   F      478             LCALL   _lcdcmd
+                     479             ; lcddisplay("WRONG PIN"); LINE # 252
+0060 7BFF            480             MOV     R3,#0FFH
+0062 7A00     F      481             MOV     R2,#HIGH (S_WRONG)
+0064 7900     F      482             MOV     R1,#LOW (S_WRONG)
+0066 120000   F      483             LCALL   _lcddisplay
+0069 120000   F      484             LCALL   L_DELAY
+                     485     
+006C                 486     L1_CHECK:
+006C 7F01            487             MOV     R7,#01H
+006E 120000   F      488             LCALL   _lcdcmd
+0071 22              489             RET     
+                     490     ; END OF check
+                     491     
+                     492             END
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE     9
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                 T Y P E  V A L U E   ATTRIBUTES
+
+?C?CLDOPTR . . . . . .  C ADDR   -----       EXT
+?C_INITSEG . . . . . .  C SEG    0008H       REL=UNIT
+?C_STARTUP . . . . . .  C ADDR   -----       EXT
+AC . . . . . . . . . .  B ADDR   00D0H.6 A   
+ACC. . . . . . . . . .  D ADDR   00E0H   A   
+AR7. . . . . . . . . .  D ADDR   0007H   A   
+B. . . . . . . . . . .  D ADDR   00F0H   A   
+CHECK. . . . . . . . .  C ADDR   0000H   R   SEG=PR_CHECK_DOORLOOC
+CHECK_ELSE . . . . . .  C ADDR   0056H   R   SEG=PR_CHECK_DOORLOOC
+CO_DOORLOOC. . . . . .  C SEG    0033H       REL=UNIT
+CY . . . . . . . . . .  B ADDR   00D0H.7 A   
+DOORLOOC . . . . . . .  N NUMB   -----       
+DPH. . . . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . . . .  D ADDR   0082H   A   
+DT_DOORLOOC. . . . . .  D SEG    000BH       REL=UNIT
+DT_LCDDISPLAY_DOORLOOC  D SEG    0005H       REL=UNIT
+DT_MAIN_DOORLOOC . . .  D SEG    0002H       REL=UNIT
+EA . . . . . . . . . .  B ADDR   00A8H.7 A   
+EN . . . . . . . . . .  B ADDR   00B0H.7 A   
+EPIN . . . . . . . . .  D ADDR   0000H   R   SEG=DT_DOORLOOC
+ES . . . . . . . . . .  B ADDR   00A8H.4 A   
+ET0. . . . . . . . . .  B ADDR   00A8H.1 A   
+ET1. . . . . . . . . .  B ADDR   00A8H.3 A   
+EX0. . . . . . . . . .  B ADDR   00A8H.0 A   
+EX1. . . . . . . . . .  B ADDR   00A8H.2 A   
+F0 . . . . . . . . . .  B ADDR   00D0H.5 A   
+IE . . . . . . . . . .  D ADDR   00A8H   A   
+IE0. . . . . . . . . .  B ADDR   0088H.1 A   
+IE1. . . . . . . . . .  B ADDR   0088H.3 A   
+INT0 . . . . . . . . .  B ADDR   00B0H.2 A   
+INT1 . . . . . . . . .  B ADDR   00B0H.3 A   
+IP . . . . . . . . . .  D ADDR   00B8H   A   
+IT0. . . . . . . . . .  B ADDR   0088H.0 A   
+IT1. . . . . . . . . .  B ADDR   0088H.2 A   
+KEYCOLUMN1 . . . . . .  B ADDR   00B0H.0 A   
+KEYCOLUMN2 . . . . . .  B ADDR   00B0H.1 A   
+KEYCOLUMN3 . . . . . .  B ADDR   00B0H.2 A   
+KEYPAD . . . . . . . .  C ADDR   0000H   R   SEG=PR_KEYPAD_DOORLOOC
+KEYROW1. . . . . . . .  B ADDR   00A0H.0 A   
+KEYROW2. . . . . . . .  B ADDR   00A0H.1 A   
+KEYROW3. . . . . . . .  B ADDR   00A0H.2 A   
+KEYROW4. . . . . . . .  B ADDR   00A0H.3 A   
+L10_KEYS . . . . . . .  C ADDR   0084H   R   SEG=PR_KEYPAD_DOORLOOC
+L11_KEYS . . . . . . .  C ADDR   008DH   R   SEG=PR_KEYPAD_DOORLOOC
+L12_KEYS . . . . . . .  C ADDR   0099H   R   SEG=PR_KEYPAD_DOORLOOC
+L13_KEYS . . . . . . .  C ADDR   009BH   R   SEG=PR_KEYPAD_DOORLOOC
+L1_CHECK . . . . . . .  C ADDR   006CH   R   SEG=PR_CHECK_DOORLOOC
+L1_KEYS. . . . . . . .  C ADDR   001BH   R   SEG=PR_KEYPAD_DOORLOOC
+L1_LCD . . . . . . . .  C ADDR   000BH   R   SEG=PR_LCDDISPLAY_DOORLOOC
+L2_DELAY . . . . . . .  C ADDR   000CH   R   SEG=PR_DELAY_DOORLOOC
+L2_KEYS. . . . . . . .  C ADDR   0024H   R   SEG=PR_KEYPAD_DOORLOOC
+L2_LCD . . . . . . . .  C ADDR   0028H   R   SEG=PR_LCDDISPLAY_DOORLOOC
+L2_X_EQ_1. . . . . . .  C ADDR   0000H   R   SEG=PR_DELAY_DOORLOOC
+L3_DELAY . . . . . . .  C ADDR   0016H   R   SEG=PR_DELAY_DOORLOOC
+L3_KEYS. . . . . . . .  C ADDR   002DH   R   SEG=PR_KEYPAD_DOORLOOC
+L3_LCD . . . . . . . .  C ADDR   002AH   R   SEG=PR_LCDDISPLAY_DOORLOOC
+L4_DELAY . . . . . . .  C ADDR   001BH   R   SEG=PR_DELAY_DOORLOOC
+L4_KEYS. . . . . . . .  C ADDR   003EH   R   SEG=PR_KEYPAD_DOORLOOC
+L5_DELAY . . . . . . .  C ADDR   0021H   R   SEG=PR_DELAY_DOORLOOC
+L5_KEYS. . . . . . . .  C ADDR   0047H   R   SEG=PR_KEYPAD_DOORLOOC
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE    10
+
+L6_DELAY . . . . . . .  C ADDR   0026H   R   SEG=PR_DELAY_DOORLOOC
+L6_KEYS. . . . . . . .  C ADDR   0050H   R   SEG=PR_KEYPAD_DOORLOOC
+L7_DELAY . . . . . . .  C ADDR   0028H   R   SEG=PR_DELAY_DOORLOOC
+L7_KEYS. . . . . . . .  C ADDR   0061H   R   SEG=PR_KEYPAD_DOORLOOC
+L8_KEYS. . . . . . . .  C ADDR   006AH   R   SEG=PR_KEYPAD_DOORLOOC
+L9_KEYS. . . . . . . .  C ADDR   0073H   R   SEG=PR_KEYPAD_DOORLOOC
+LCDDISPLAY_LABEL . . .  D ADDR   0000H   R   SEG=DT_LCDDISPLAY_DOORLOOC
+L_CHECK. . . . . . . .  C ADDR   0049H   R   SEG=PR_MAIN_DOORLOOC
+L_DELAY. . . . . . . .  C ADDR   0005H   R   SEG=PR_DELAY_DOORLOOC
+L_X_EQ_1 . . . . . . .  C ADDR   0000H   R   SEG=PR_DELAY_DOORLOOC
+MAIN . . . . . . . . .  C ADDR   0000H   R   SEG=PR_MAIN_DOORLOOC
+MAIN_LABEL . . . . . .  D ADDR   0000H   R   SEG=DT_MAIN_DOORLOOC
+MOTORPIN1. . . . . . .  B ADDR   00B0H.3 A   
+MOTORPIN2. . . . . . .  B ADDR   00B0H.4 A   
+OV . . . . . . . . . .  B ADDR   00D0H.2 A   
+P. . . . . . . . . . .  B ADDR   00D0H.0 A   
+P0 . . . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . . . .  D ADDR   00B0H   A   
+PCON . . . . . . . . .  D ADDR   0087H   A   
+PIN. . . . . . . . . .  D ADDR   0005H   R   SEG=DT_DOORLOOC
+PIN_NE_ZERO. . . . . .  C ADDR   002AH   R   SEG=PR_MAIN_DOORLOOC
+PR_CHECK_DOORLOOC. . .  C SEG    0072H       REL=UNIT
+PR_DELAY_DOORLOOC. . .  C SEG    0029H       REL=UNIT
+PR_KEYPAD_DOORLOOC . .  C SEG    009CH       REL=UNIT
+PR_LCDCMD_DOORLOOC . .  C SEG    000EH       REL=UNIT
+PR_LCDDAT_DOORLOOC . .  C SEG    000EH       REL=UNIT
+PR_LCDDISPLAY_DOORLOOC  C SEG    0031H       REL=UNIT
+PR_MAIN_DOORLOOC . . .  C SEG    004EH       REL=UNIT
+PS . . . . . . . . . .  B ADDR   00B8H.4 A   
+PSW. . . . . . . . . .  D ADDR   00D0H   A   
+PT0. . . . . . . . . .  B ADDR   00B8H.1 A   
+PT1. . . . . . . . . .  B ADDR   00B8H.3 A   
+PX0. . . . . . . . . .  B ADDR   00B8H.0 A   
+PX1. . . . . . . . . .  B ADDR   00B8H.2 A   
+RB8. . . . . . . . . .  B ADDR   0098H.2 A   
+RD . . . . . . . . . .  B ADDR   00B0H.7 A   
+REN. . . . . . . . . .  B ADDR   0098H.4 A   
+RI . . . . . . . . . .  B ADDR   0098H.0 A   
+RS . . . . . . . . . .  B ADDR   00B0H.5 A   
+RS0. . . . . . . . . .  B ADDR   00D0H.3 A   
+RS1. . . . . . . . . .  B ADDR   00D0H.4 A   
+RW . . . . . . . . . .  B ADDR   00B0H.6 A   
+RXD. . . . . . . . . .  B ADDR   00B0H.0 A   
+SBUF . . . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . . . .  D ADDR   0098H   A   
+SM0. . . . . . . . . .  B ADDR   0098H.7 A   
+SM1. . . . . . . . . .  B ADDR   0098H.6 A   
+SM2. . . . . . . . . .  B ADDR   0098H.5 A   
+SP . . . . . . . . . .  D ADDR   0081H   A   
+S_CORRECT. . . . . . .  C ADDR   0011H   R   SEG=CO_DOORLOOC
+S_ENTER. . . . . . . .  C ADDR   0000H   R   SEG=CO_DOORLOOC
+S_OPEN . . . . . . . .  C ADDR   001DH   R   SEG=CO_DOORLOOC
+S_WRONG. . . . . . . .  C ADDR   0029H   R   SEG=CO_DOORLOOC
+T0 . . . . . . . . . .  B ADDR   00B0H.4 A   
+T1 . . . . . . . . . .  B ADDR   00B0H.5 A   
+TB8. . . . . . . . . .  B ADDR   0098H.3 A   
+TCON . . . . . . . . .  D ADDR   0088H   A   
+TEMP . . . . . . . . .  D ADDR   0000H   R   SEG=DT_LCDDISPLAY_DOORLOOC
+TEMP2. . . . . . . . .  D ADDR   0003H   R   SEG=DT_LCDDISPLAY_DOORLOOC
+TEMP_MAIN. . . . . . .  D ADDR   0000H   R   SEG=DT_MAIN_DOORLOOC
+TF0. . . . . . . . . .  B ADDR   0088H.5 A   
+TF1. . . . . . . . . .  B ADDR   0088H.7 A   
+TH0. . . . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . . . .  D ADDR   008DH   A   
+A51 MACRO ASSEMBLER  DOORLOOC                                                             05/08/2021 13:01:48 PAGE    11
+
+TI . . . . . . . . . .  B ADDR   0098H.1 A   
+TL0. . . . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . . . .  B ADDR   0088H.6 A   
+TXD. . . . . . . . . .  B ADDR   00B0H.1 A   
+WHILE_1. . . . . . . .  C ADDR   000FH   R   SEG=PR_MAIN_DOORLOOC
+WHILE_1_TERMINATE. . .  C ADDR   0047H   R   SEG=PR_MAIN_DOORLOOC
+WHILE_X_0. . . . . . .  C ADDR   0003H   R   SEG=PR_KEYPAD_DOORLOOC
+WR . . . . . . . . . .  B ADDR   00B0H.6 A   
+_DELAY . . . . . . . .  C ADDR   0009H   R   SEG=PR_DELAY_DOORLOOC
+_LCDCMD. . . . . . . .  C ADDR   0000H   R   SEG=PR_LCDCMD_DOORLOOC
+_LCDDAT. . . . . . . .  C ADDR   0000H   R   SEG=PR_LCDDAT_DOORLOOC
+_LCDDISPLAY. . . . . .  C ADDR   0000H   R   SEG=PR_LCDDISPLAY_DOORLOOC
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

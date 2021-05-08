@@ -1,0 +1,5 @@
+".\Objects\doorlooc.obj",
+"C:\Keil_v5\C51\LIB\C51FPL.LIB",
+"C:\Keil_v5\C51\LIB\C51L.LIB" 
+TO ".\Objects\doorlock" 
+PRINT(".\Listings\doorlock.m51") CODE( 0X0000-0X0FFF )

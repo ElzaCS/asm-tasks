@@ -1,0 +1,3 @@
+TRANSFER
+".\Objects\doorlooc.obj" 
+TO ".\Objects\doorlock.LIB"
