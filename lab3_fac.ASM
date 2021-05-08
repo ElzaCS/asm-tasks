@@ -1,0 +1,21 @@
+DATA SEGMENT
+N DW 6
+ANS DW ?
+DATA ENDS
+CODE SEGMENT
+         ASSUME DS:DATA,CS:CODE
+START:
+      MOV AX,DATA
+      MOV DS,AX
+
+      MOV AX,00
+      MOV AX,N
+ L1:  DEC N
+      MUL N
+      MOV CX,N
+      CMP CX,01
+      JNZ L1
+      MOV ANS, AX
+      INT 21H
+CODE ENDS
+END START
